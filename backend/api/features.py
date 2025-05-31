@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
-from app.core.embedder import SemanticEmbedder
-from app.core.extractor import FeatureExtractor
+from backend.core.embedder import SemanticEmbedder
+from backend.core.extractor import FeatureExtractor
 
 router = APIRouter()
 

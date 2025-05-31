@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
-from app.core.model import FeedbackModel
+from backend.core.model import FeedbackModel
 
 router = APIRouter()
 model = FeedbackModel()

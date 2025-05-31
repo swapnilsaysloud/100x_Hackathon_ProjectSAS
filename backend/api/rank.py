@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List
-from app.core.model import FeedbackModel
-from app.core.ranker import CandidateRanker
+from backend.core.model import FeedbackModel
+from backend.core.ranker import CandidateRanker
 
 router = APIRouter()
 

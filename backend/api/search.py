@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import List
 from pymongo import MongoClient
-from app.core.searcher import CandidateSearcher
-from app.dependencies import get_mongo_collection
+from backend.core.searcher import CandidateSearcher
+from backend.dependencies import get_mongo_collection
 
 router = APIRouter()
 

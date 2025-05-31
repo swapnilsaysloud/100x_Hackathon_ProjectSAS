@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.core.embedder import SemanticEmbedder
+from backend.core.embedder import SemanticEmbedder
 
 router = APIRouter()
 
