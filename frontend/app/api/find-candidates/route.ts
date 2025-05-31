@@ -1,0 +1,167 @@
+// No changes needed in app/api/find-candidates/route.ts
+import { NextResponse } from "next/server"
+import type { Candidate } from "@/lib/types"
+
+const dummyCandidates: Candidate[] = [
+  {
+    id: "1",
+    name: "Alice Wonderland",
+    title: "Senior Frontend Developer",
+    summary: "Experienced Frontend Developer...",
+    skills: ["React", "Next.js", "TypeScript"],
+    matchScore: 92,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "San Francisco, CA",
+  },
+  {
+    id: "2",
+    name: "Bob The Builder",
+    title: "Full Stack Engineer",
+    summary: "Versatile Full Stack Engineer...",
+    skills: ["Node.js", "Python", "React"],
+    matchScore: 88,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "New York, NY",
+  },
+  {
+    id: "3",
+    name: "Carol Danvers",
+    title: "UX/UI Designer",
+    summary: "Creative UX/UI Designer...",
+    skills: ["Figma", "Adobe XD", "User Research"],
+    matchScore: 78,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Austin, TX",
+  },
+  {
+    id: "4",
+    name: "David Copperfield",
+    title: "DevOps Engineer",
+    summary: "Results-oriented DevOps Engineer...",
+    skills: ["AWS", "Kubernetes", "Docker"],
+    matchScore: 95,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Seattle, WA",
+  },
+  {
+    id: "5",
+    name: "Eve Harrington",
+    title: "Product Manager",
+    summary: "Strategic Product Manager...",
+    skills: ["Product Strategy", "Agile", "JIRA"],
+    matchScore: 82,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Remote",
+  },
+  {
+    id: "6",
+    name: "Frankenstein Monster",
+    title: "AI/ML Engineer",
+    summary: "Innovative AI/ML Engineer...",
+    skills: ["Python", "TensorFlow", "NLP"],
+    matchScore: 90,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Boston, MA",
+  },
+  {
+    id: "7",
+    name: "Grace Hopper",
+    title: "Software Architect",
+    summary: "Visionary Software Architect...",
+    skills: ["Microservices", "Java", "Kafka"],
+    matchScore: 97,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Washington D.C.",
+  },
+  {
+    id: "8",
+    name: "Harry Potter",
+    title: "Data Scientist",
+    summary: "Analytical Data Scientist...",
+    skills: ["R", "Python", "Machine Learning"],
+    matchScore: 85,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "London, UK",
+  },
+  {
+    id: "9",
+    name: "Ivy Gardener",
+    title: "Junior Developer",
+    summary: "Eager Junior Developer looking to grow...",
+    skills: ["HTML", "CSS", "JavaScript"],
+    matchScore: 70,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Portland, OR",
+  },
+  {
+    id: "10",
+    name: "Jack Sparrow",
+    title: "Cloud Solutions Architect",
+    summary: "Expert in cloud migrations and architecture...",
+    skills: ["AWS", "Azure", "GCP"],
+    matchScore: 93,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Caribbean Sea (Remote)",
+  },
+  {
+    id: "11",
+    name: "Kim Possible",
+    title: "Security Analyst",
+    summary: "Dedicated to protecting systems and data...",
+    skills: ["Cybersecurity", "Penetration Testing", "SIEM"],
+    matchScore: 89,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Middleton, USA",
+  },
+  {
+    id: "12",
+    name: "Leo Fitz",
+    title: "Systems Engineer",
+    summary: "Specialist in complex system integrations...",
+    skills: ["System Design", "Integration", "Troubleshooting"],
+    matchScore: 86,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "Classified",
+  },
+  {
+    id: "13",
+    name: "Monica Geller",
+    title: "Project Coordinator",
+    summary: "Highly organized project coordinator...",
+    skills: ["Organization", "Scheduling", "Communication"],
+    matchScore: 75,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "New York, NY",
+  },
+  {
+    id: "14",
+    name: "Neo Anderson",
+    title: "Cybersecurity Architect",
+    summary: "Architecting secure systems for the new age...",
+    skills: ["Zero Trust", "Cryptography", "Network Security"],
+    matchScore: 96,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "The Matrix",
+  },
+  {
+    id: "15",
+    name: "Olivia Benson",
+    title: "Lead Investigator (Tech Crimes)",
+    summary: "Leading investigations into tech-related crimes...",
+    skills: ["Digital Forensics", "Investigation", "Team Leadership"],
+    matchScore: 91,
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    location: "New York, NY",
+  },
+]
+
+export async function POST(request: Request) {
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 700 + Math.random() * 500))
+    const sortedCandidates = [...dummyCandidates].sort((a, b) => b.matchScore - a.matchScore)
+    return NextResponse.json({ candidates: sortedCandidates })
+  } catch (error) {
+    console.error("API Error:", error)
+    return NextResponse.json({ message: "Error processing request" }, { status: 500 })
+  }
+}
