@@ -1,21 +1,17 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from typing import List
-from backend.core.embedder import SemanticEmbedder
-from backend.core.extractor import FeatureExtractor
+from backend.core.extractor import JobFeatureExtractor
 
 router = APIRouter()
+extractor = JobFeatureExtractor()
 
-embedder = SemanticEmbedder()
-extractor = FeatureExtractor(embedder)
+class JobDescriptionRequest(BaseModel):
+    text: str
 
-class FeatureRequest(BaseModel):
-    candidates: List[dict]
-    query_embedding: List[float]
+class JobFeatureResponse(BaseModel):
+    extracted: dict
 
-@router.post("/extract-features")
-def extract_features(req: FeatureRequest):
-    results = [
-        extractor.extract(c, req.query_embedding) for c in req.candidates
-    ]
-    return results
+@router.post("/extract-job-features", response_model=JobFeatureResponse)
+def extract_job_features(req: JobDescriptionRequest):
+    extracted = extractor.extract(req.text)
+    return JobFeatureResponse(extracted=extracted)
