@@ -6,3 +6,4 @@ google-generativeai  # if using Gemini
 pymongo
 scikit-learn
 sentence-transformers
+pymongo[srv]
