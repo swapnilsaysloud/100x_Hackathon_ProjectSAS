@@ -1,5 +1,5 @@
-from core.extractor import FeatureExtractor
-from core.model import FeedbackModel
+from backend.core.extractor import FeatureExtractor
+from backend.core.model import FeedbackModel
 
 class CandidateRanker:
     def __init__(self, model: FeedbackModel, extractor: FeatureExtractor):

@@ -1,4 +1,4 @@
-from backend.core.llm_clients.gemini_client import GeminiClient
+from core.llm_clients.gemini_client import GeminiClient
 from typing import Dict, Any
 from sentence_transformers import SentenceTransformer
 import re
