@@ -27,6 +27,7 @@ class JobDescriptionResponse(BaseModel):
 def process_job_description(req: JobDescriptionRequest):
     # 1. Extract structured fields from job description
     extracted = extractor.extract_fields(req.text)
+    print(extracted)
 
     # 2. Build standardized query from extracted fields
     # Build candidate-style summary

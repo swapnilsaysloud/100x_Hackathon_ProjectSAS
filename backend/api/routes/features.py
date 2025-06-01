@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from backend.core.extractor import JobFeatureExtractor
+from backend.core.extractor import SemanticJobExtractor
 
 router = APIRouter()
-extractor = JobFeatureExtractor()
+extractor = SemanticJobExtractor()
 
 class JobDescriptionRequest(BaseModel):
     text: str
@@ -13,5 +13,5 @@ class JobFeatureResponse(BaseModel):
 
 @router.post("/extract-job-features", response_model=JobFeatureResponse)
 def extract_job_features(req: JobDescriptionRequest):
-    extracted = extractor.extract(req.text)
+    extracted = extractor.extract_fields(req.text)
     return JobFeatureResponse(extracted=extracted)

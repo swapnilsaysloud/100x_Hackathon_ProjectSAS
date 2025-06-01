@@ -22,7 +22,7 @@ class SemanticJobExtractor:
         Job Description:
         \"\"\"{job_description}\"\"\"
         
-        Return the result as a JSON object with keys: skills, experience, qualifications.
+        Return the result as a JSON object with keys: skills, experience, qualifications. Don't wrap it in ```.
         """
 
         if self.llm_client:

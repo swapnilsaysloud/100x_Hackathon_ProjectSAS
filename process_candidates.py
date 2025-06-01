@@ -8,9 +8,9 @@ from backend.core.embedder import SemanticEmbedder
 load_dotenv()
 
 # Initialize components
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-DB_NAME = "scoreit"
-COLLECTION_NAME = "candidates"
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://poddarronit03:4t8HWfqnKaHTPnaB@cluster0.4gz2iwu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DB_NAME = "candidates"
+COLLECTION_NAME = "resumes"
 
 client = pymongo.MongoClient(MONGO_URI)
 db = client[DB_NAME]

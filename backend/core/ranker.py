@@ -1,8 +1,8 @@
-from backend.core.extractor import FeatureExtractor
+from backend.core.extractor import SemanticJobExtractor
 from backend.core.model import FeedbackModel
 
 class CandidateRanker:
-    def __init__(self, model: FeedbackModel, extractor: FeatureExtractor):
+    def __init__(self, model: FeedbackModel, extractor: SemanticJobExtractor):
         self.model = model
         self.extractor = extractor
 

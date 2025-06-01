@@ -1,9 +1,9 @@
 from pymongo import MongoClient
 from backend.core.embedder import SemanticEmbedder
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client["candidates_db"]
-collection = db["candidates"]
+client = MongoClient("mongodb+srv://poddarronit03:4t8HWfqnKaHTPnaB@cluster0.4gz2iwu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+db = client["candidates"]
+collection = db["resumes"]
 
 embedder = SemanticEmbedder()
 
