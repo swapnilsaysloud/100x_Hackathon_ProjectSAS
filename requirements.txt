@@ -2,7 +2,7 @@ fastapi
 uvicorn
 pydantic
 python-dotenv
-openai  # if using OpenAI embeddings
 google-generativeai  # if using Gemini
 pymongo
 scikit-learn
+sentence-transformers
