@@ -6,11 +6,21 @@ import { CandidateCard } from "@/components/candidate-card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import type { Candidate } from "@/lib/types"
-import { UserSearch, MessageSquareText, CheckCircle, XCircle, Users, Briefcase } from "lucide-react"
+import {
+  UserSearch,
+  MessageSquareText,
+  CheckCircle,
+  XCircle,
+  Users,
+  Briefcase,
+  AlertTriangle,
+  UserPlus,
+} from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PaginationControls } from "@/components/pagination-controls"
 import { BulkOutreachSelect } from "@/components/bulk-outreach-select"
 import { EmailOutreachDialog } from "@/components/email-outreach-dialog"
+import { useRouter } from "next/navigation"
 
 const CANDIDATES_PER_PAGE = 6
 
@@ -26,12 +36,18 @@ export default function HireAiPage() {
   const totalPages = Math.ceil(allCandidates.length / CANDIDATES_PER_PAGE)
 
   const [isOutreachDialogOpen, setIsOutreachDialogOpen] = useState(false)
+  const [isSendingEmails, setIsSendingEmails] = useState(false)
+  const router = useRouter()
 
   const currentCandidates = useMemo(() => {
     const startIndex = (currentPage - 1) * CANDIDATES_PER_PAGE
     const endIndex = startIndex + CANDIDATES_PER_PAGE
     return allCandidates.slice(startIndex, endIndex)
   }, [allCandidates, currentPage])
+
+  const selectedCandidateObjects = useMemo(() => {
+    return allCandidates.filter((c) => selectedCandidates.has(c.id))
+  }, [allCandidates, selectedCandidates])
 
   const handleSearch = async (prompt: string) => {
     setIsLoading(true)
@@ -60,13 +76,13 @@ export default function HireAiPage() {
 
   const toggleCandidateSelection = (candidateId: string) => {
     setSelectedCandidates((prevSelected) => {
-      const newSelected = new Set(prevSelected) // Crucial: create a new Set for React's state update
+      const newSelected = new Set(prevSelected)
       if (newSelected.has(candidateId)) {
         newSelected.delete(candidateId)
       } else {
         newSelected.add(candidateId)
       }
-      return newSelected // Return the new set
+      return newSelected
     })
   }
 
@@ -95,39 +111,79 @@ export default function HireAiPage() {
     setIsOutreachDialogOpen(true)
   }
 
-  const handleSendOutreachEmails = ({
-    senderEmail,
+  const handleSendOutreachEmails = async ({
+    replyToEmail,
+    senderName,
     subject,
     body,
+    isPersonalized,
   }: {
-    senderEmail: string
+    replyToEmail: string
+    senderName?: string
     subject: string
     body: string
+    isPersonalized: boolean
   }) => {
-    const selectedCandidateDetails = allCandidates.filter((c) => selectedCandidates.has(c.id))
+    setIsSendingEmails(true)
 
-    console.log("Simulating Email Send Action:")
-    console.log("Sender:", senderEmail)
-    console.log("Subject:", subject)
-    console.log("Body:", body)
-    console.log(
-      "Recipients:",
-      selectedCandidateDetails.map((c) => ({
-        id: c.id,
-        name: c.name,
-        email: `${c.name
-          .split(" ")[0]
-          .toLowerCase()
-          .replace(/[^a-z0-9]/gi, "")}@example.com`, // Simulated email
-      })),
-    )
+    // Pass complete candidate objects instead of just basic info
+    const selectedCandidateDetails = selectedCandidateObjects
 
-    toast({
-      title: "Emails Sent (Simulated)",
-      description: `Successfully initiated email outreach to ${selectedCandidates.size} candidate(s).`,
-      action: <CheckCircle className="h-5 w-5 text-green-600" />,
-    })
-    setIsOutreachDialogOpen(false)
+    try {
+      const response = await fetch("/api/send-outreach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          replyToEmail,
+          senderName,
+          subject,
+          body,
+          candidates: selectedCandidateDetails, // Send full candidate objects
+          isPersonalized,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send emails")
+      }
+
+      // Show detailed results
+      if (result.totalFailed > 0) {
+        toast({
+          title: "Emails Sent with Some Issues",
+          description: `${result.totalSent} emails sent successfully. ${result.totalFailed} failed to send.`,
+          action: <AlertTriangle className="h-5 w-5 text-yellow-600" />,
+        })
+      } else {
+        toast({
+          title: "All Emails Sent Successfully!",
+          description: `Successfully sent ${result.totalSent} ${isPersonalized ? "personalized" : ""} emails to candidates.`,
+          action: <CheckCircle className="h-5 w-5 text-green-600" />,
+        })
+      }
+
+      // Log detailed results for debugging
+      console.log("Email sending results:", result)
+      if (result.failed.length > 0) {
+        console.log("Failed emails:", result.failed)
+      }
+
+      setIsOutreachDialogOpen(false)
+
+      // Clear selection after successful send
+      setSelectedCandidates(new Set())
+    } catch (error) {
+      console.error("Failed to send emails:", error)
+      toast({
+        variant: "destructive",
+        title: "Failed to Send Emails",
+        description: error instanceof Error ? error.message : "An unknown error occurred while sending emails.",
+      })
+    } finally {
+      setIsSendingEmails(false)
+    }
   }
 
   return (
@@ -138,6 +194,18 @@ export default function HireAiPage() {
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-sky-700">HireAI Platform</h1>
         <p className="mt-1 sm:mt-2 text-md sm:text-lg text-slate-600">Find top talent, faster.</p>
+
+        {/* Candidate Upload Button */}
+        <div className="mt-4">
+          <Button
+            onClick={() => router.push("/candidate-upload")}
+            variant="outline"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0 font-semibold"
+          >
+            <UserPlus className="mr-2 h-5 w-5" />
+            Join as Candidate
+          </Button>
+        </div>
       </header>
 
       <main className="max-w-6xl mx-auto">
@@ -199,11 +267,13 @@ export default function HireAiPage() {
                 <BulkOutreachSelect onSelect={handleBulkSelect} disabled={allCandidates.length === 0} />
                 <Button
                   onClick={handleOpenOutreachDialog}
-                  disabled={selectedCandidates.size === 0}
+                  disabled={selectedCandidates.size === 0 || isSendingEmails}
                   className="bg-sky-600 hover:bg-sky-700 text-white transition-all duration-150 ease-in-out group w-full sm:w-auto"
                 >
                   <MessageSquareText className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                  Outreach {selectedCandidates.size > 0 ? `(${selectedCandidates.size})` : "Selected"}
+                  {isSendingEmails
+                    ? "Sending..."
+                    : `Outreach ${selectedCandidates.size > 0 ? `(${selectedCandidates.size})` : "Selected"}`}
                 </Button>
               </div>
             </div>
@@ -228,11 +298,14 @@ export default function HireAiPage() {
         isOpen={isOutreachDialogOpen}
         onOpenChange={setIsOutreachDialogOpen}
         selectedCount={selectedCandidates.size}
+        selectedCandidates={selectedCandidateObjects}
         onSubmit={handleSendOutreachEmails}
+        isLoading={isSendingEmails}
       />
 
       <footer className="text-center mt-12 text-sm text-slate-500">
         <p>&copy; {new Date().getFullYear()} HireAI Platform. All rights reserved.</p>
+        <p className="text-xs mt-1">📧 Real email functionality powered by Resend</p>
       </footer>
     </div>
   )

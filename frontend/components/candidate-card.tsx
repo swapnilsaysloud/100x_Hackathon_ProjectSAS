@@ -1,10 +1,14 @@
+"use client"
+
+import type React from "react"
+
 import type { Candidate } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
-import { Briefcase, MapPin, Check } from "lucide-react"
+import { Briefcase, MapPin, Check, Building2 } from "lucide-react"
 
 interface CandidateCardProps {
   candidate: Candidate
@@ -21,8 +25,18 @@ export function CandidateCard({ candidate, isSelected, onToggleSelect }: Candida
       .toUpperCase()
   }
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent triggering when clicking on the checkbox itself
+    if (!(e.target as HTMLElement).closest(".checkbox-container")) {
+      onToggleSelect(candidate.id)
+    }
+  }
+
   return (
-    <Card className="bg-white border-slate-200 text-slate-700 shadow-md hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+    <Card
+      className="bg-white border-slate-200 text-slate-700 shadow-md hover:shadow-lg transition-shadow duration-300 relative overflow-hidden cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div
         className={`absolute top-0 right-0 h-10 w-10 bg-sky-500/90 flex items-center justify-center rounded-bl-lg transition-all duration-300 ${isSelected ? "opacity-100 scale-100" : "opacity-0 scale-0"}`}
       >
@@ -44,19 +58,24 @@ export function CandidateCard({ candidate, isSelected, onToggleSelect }: Candida
           <CardDescription className="text-sm text-slate-500 flex items-center">
             <Briefcase className="h-4 w-4 mr-1.5 text-slate-400" /> {candidate.title}
           </CardDescription>
+          <CardDescription className="text-sm text-slate-500 flex items-center mt-1">
+            <Building2 className="h-4 w-4 mr-1.5 text-slate-400" /> {candidate.company}
+          </CardDescription>
           {candidate.location && (
             <CardDescription className="text-sm text-slate-500 flex items-center mt-1">
               <MapPin className="h-4 w-4 mr-1.5 text-slate-400" /> {candidate.location}
             </CardDescription>
           )}
         </div>
-        <Checkbox
-          id={`select-${candidate.id}`}
-          checked={isSelected}
-          onCheckedChange={() => onToggleSelect(candidate.id)} // This triggers the state update in parent
-          className="border-slate-400 data-[state=checked]:bg-sky-600 data-[state=checked]:text-white data-[state=checked]:border-sky-600 focus:ring-sky-500"
-          aria-label={`Select ${candidate.name}`}
-        />
+        <div className="checkbox-container" onClick={(e) => e.stopPropagation()}>
+          <Checkbox
+            id={`select-${candidate.id}`}
+            checked={isSelected}
+            onCheckedChange={() => onToggleSelect(candidate.id)}
+            className="border-slate-400 data-[state=checked]:bg-sky-600 data-[state=checked]:text-white data-[state=checked]:border-sky-600 focus:ring-sky-500"
+            aria-label={`Select ${candidate.name}`}
+          />
+        </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
         <p className="text-sm text-slate-600 mb-3 leading-relaxed line-clamp-3">{candidate.summary}</p>

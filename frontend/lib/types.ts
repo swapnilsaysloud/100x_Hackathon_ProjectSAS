@@ -1,4 +1,3 @@
-// No changes needed in lib/types.ts
 export interface Candidate {
   id: string
   name: string
@@ -8,4 +7,6 @@ export interface Candidate {
   matchScore: number // Percentage from 0 to 100
   avatarUrl?: string
   location?: string
+  email: string
+  company: string // Add company field
 }
